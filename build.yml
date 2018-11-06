@@ -8,6 +8,7 @@ jobs:
       call "C:\opt\ros\melodic\x64\env.bat" catkin_init_workspace
       call "C:\opt\ros\melodic\x64\env.bat" catkin_make install --source .
 - job: Test
+  dependsOn: Build
   steps:
   - script: |
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
