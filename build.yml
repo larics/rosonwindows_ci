@@ -1,0 +1,11 @@
+parameters:
+
+jobs:
+- job: Build
+  steps:
+  - script: |
+      choco sources add -n=roswin -s https://roswin.azurewebsites.net/api/v2/ --priority 1
+      choco upgrade ros-melodic-ros_core -y
+      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+      call "C:\opt\ros\melodic\x64\env.bat" catkin_init_workspace
+      call "C:\opt\ros\melodic\x64\env.bat" catkin_make install --source .
