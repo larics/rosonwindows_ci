@@ -28,5 +28,6 @@ jobs:
 
 under `template`, currently there is one required parameter `ros_metapackage` which is the basic image to check out for CI build. In this example, it will install `ros-melodic-desktop` before the CI build.
 
-Once the wizard finishes, now you have your owned ROS on Windows CI build.
+Once the wizard finishes, now you have your owned ROS on Windows CI build. 
 
+You can also find an example from this [repo](https://github.com/seanyen-msft/common_msgs/tree/azure-pipelines)
