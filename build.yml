@@ -6,6 +6,29 @@ jobs:
       choco upgrade ros-melodic-ros_core -y
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
       call "C:\opt\ros\melodic\x64\env.bat" catkin_init_workspace
-      call "C:\opt\ros\melodic\x64\env.bat" catkin_make install --source .
-      call "C:\opt\ros\melodic\x64\env.bat" catkin_make run_tests --source .
-      call "C:\opt\ros\melodic\x64\env.bat" catkin_test_results build/test_results
+      call "C:\opt\ros\melodic\x64\env.bat" catkin_make_isolated --install --source .
+      call "C:\opt\ros\melodic\x64\env.bat" catkin_make_isolated --source . --make-args run_tests
+
+  - task: PublishTestResults@2
+    displayName: Publish nosetests results
+    inputs:
+      testRunner: 'jUnit'
+      testResultsFiles: '**\nosetests-*.xml'
+      searchFolder: '$(Build.SourcesDirectory)\build_isolated'
+    condition: always()
+
+  - task: PublishTestResults@2
+    displayName: Publish rostest results
+    inputs:
+      testRunner: 'jUnit'
+      testResultsFiles: '**\rostest-*.xml'
+      searchFolder: '$(Build.SourcesDirectory)\build_isolated'
+    condition: always()
+
+  - task: PublishTestResults@2
+    displayName: Publish gtest results
+    inputs:
+      testRunner: 'jUnit'
+      testResultsFiles: '**\gtest-*.xml'
+      searchFolder: '$(Build.SourcesDirectory)\build_isolated'
+    condition: always()
