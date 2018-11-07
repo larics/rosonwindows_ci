@@ -3,6 +3,7 @@ parameters:
 
 jobs:
 - job: Build
+  timeoutInMinutes: 240
   steps:
   - script: |
       choco sources add -n=roswin -s https://roswin.azurewebsites.net/api/v2/ --priority 1
