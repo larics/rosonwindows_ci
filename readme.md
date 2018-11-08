@@ -8,7 +8,7 @@ A common Azure DevOps pipeline template for ROS on Windows CI build. This templa
   
 ## How to use this template
 Firstly, go to your Azure DevOps project and create a new pipeline. As walking through the wizard, select `starter pipeline` and it will create a file of `azure-pipelines.yml` under the root of your ROS repository. And replace it with the following content:
-```
+```yaml
 resources:
   repositories:
     - repository: templates
