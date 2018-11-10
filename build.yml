@@ -1,10 +1,12 @@
 parameters:
-  ros_metapackage: 'ros-melodic-ros_core'
+  ros_metapackage: 'ros-melodic-desktop'
+  pre_build: []
 
 jobs:
 - job: Build
   timeoutInMinutes: 240
   steps:
+  - ${{ parameters.pre_build }}
   - script: |
       choco sources add -n=roswin -s https://roswin.azurewebsites.net/api/v2/ --priority 1
       choco upgrade %ROS_METAPACKAGE% -y
