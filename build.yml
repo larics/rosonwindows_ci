@@ -5,44 +5,34 @@ parameters:
 jobs:
 - job: Build
   pool:
-    vmImage: 'vs2017-win2016'
+    vmImage: 'win1803'
   timeoutInMinutes: 240
   steps:
+  - powershell: |
+      choco install visualstudio2017-workload-vctools --package-parameters "--no-includeRecommended"
+  - powershell: |
+      [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+      Invoke-WebRequest -Uri "https://github.com/Microsoft/VFSForGit/releases/download/v1.0.18297.1/Git-2.19.0.gvfs.1.34.gc7fb556-64-bit.exe" -OutFile "Git-2.19.0.gvfs.1.34.gc7fb556-64-bit.exe"
+      Invoke-WebRequest -Uri "https://github.com/Microsoft/VFSForGit/releases/download/v1.0.18297.1/SetupGVFS.1.0.18297.1.exe" -OutFile "SetupGVFS.1.0.18297.1.exe"
+  - script: |
+      Git-2.19.0.gvfs.1.34.gc7fb556-64-bit.exe /silent
+      SetupGVFS.1.0.18297.1.exe /silent
+  - script: |
+      set "PATH=C:\Program Files\GVFS;%PATH%"
+      git credential-manager version
+      git config --global core.gvfs true
+      c: & cd c:\
+      SET GIT_TRACE=1
+      SET GCM_TRACE=1
+      cmdkey /generic:LegacyGeneric:target=git:https://seanyen2018@dev.azure.com/seanyen2018/default/_git/rosdeps_cache /user:"Agent PAT" /password:"%SYSTEM_ACCESSTOKEN%"
+      gvfs clone https://seanyen2018@dev.azure.com/seanyen2018/default/_git/rosdeps_cache -b build/20181113.16
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+  - script: |
+      mklink /d c:\opt c:\rosdeps_cache\src
+      call "C:\opt\ros\melodic\x64\env.bat" rosdep install --from-paths . --ignore-src -r -y
   - ${{ parameters.pre_build }}
   - script: |
-      choco sources add -n=roswin -s https://roswin.azurewebsites.net/api/v2/ --priority 1
-      choco upgrade %ROS_METAPACKAGE% -y
-      call "C:\opt\ros\melodic\x64\env.bat" rosdep install --from-paths . --ignore-src -r -y
-    env:
-      ROS_METAPACKAGE: ${{ parameters.ros_metapackage }}
-    displayName: Install prerequisites
-
-  - script: |
-      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+      call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
       call "C:\opt\ros\melodic\x64\env.bat" catkin_init_workspace
       call "C:\opt\ros\melodic\x64\env.bat" catkin_make_isolated --install --source .
-    displayName: Build repo
-
-  - task: PublishTestResults@2
-    displayName: Publish nosetests results
-    inputs:
-      testRunner: 'jUnit'
-      testResultsFiles: '**\nosetests-*.xml'
-      searchFolder: '$(Build.SourcesDirectory)\build_isolated'
-    condition: always()
-
-  - task: PublishTestResults@2
-    displayName: Publish rostest results
-    inputs:
-      testRunner: 'jUnit'
-      testResultsFiles: '**\rostest-*.xml'
-      searchFolder: '$(Build.SourcesDirectory)\build_isolated'
-    condition: always()
-
-  - task: PublishTestResults@2
-    displayName: Publish gtest results
-    inputs:
-      testRunner: 'jUnit'
-      testResultsFiles: '**\gtest-*.xml'
-      searchFolder: '$(Build.SourcesDirectory)\build_isolated'
-    condition: always()
