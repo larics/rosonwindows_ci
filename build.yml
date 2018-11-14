@@ -33,9 +33,9 @@ jobs:
       choco sources add -n=roswin -s https://roswin.azurewebsites.net/api/v2/ --priority 1
       call "C:\opt\ros\melodic\x64\env.bat" rosdep init
       call "C:\opt\ros\melodic\x64\env.bat" rosdep update
-      call "C:\opt\ros\melodic\x64\env.bat" rosdep install --from-paths . --ignore-src -r -y
   - ${{ parameters.pre_build }}
   - script: |
       call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+      call "C:\opt\ros\melodic\x64\env.bat" rosdep install --from-paths . --ignore-src -r -y
       call "C:\opt\ros\melodic\x64\env.bat" catkin_init_workspace
       call "C:\opt\ros\melodic\x64\env.bat" catkin_make_isolated --install --source .
