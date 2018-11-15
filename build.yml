@@ -11,7 +11,7 @@ jobs:
   - script: |
       c: & cd c:\
       cmdkey /generic:LegacyGeneric:target=git:https://seanyen2018@dev.azure.com/seanyen2018/default/_git/rosdeps_cache /user:"Agent PAT" /password:"%SYSTEM_ACCESSTOKEN%"
-      gvfs clone https://seanyen2018@dev.azure.com/seanyen2018/default/_git/rosdeps_cache -b build/20181113.16
+      git clone https://seanyen2018@dev.azure.com/seanyen2018/default/_git/rosdeps_cache -b build/20181113.16
     env:
       SYSTEM_ACCESSTOKEN: $(System.AccessToken)
   - script: |
